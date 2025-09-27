@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from models.product import ProductCreate
-from models.order import OrderStatus
-import database
+from app.schemas.product import ProductCreate
+from app.schemas.order import OrderStatus
+import app.database
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 

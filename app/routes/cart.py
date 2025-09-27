@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from models.cart import CartItem, CartItemCreate, CartResponse
-from routes.auth import get_current_user
-import database
+from app.schemas.cart import CartItem, CartItemCreate, CartResponse
+from app.routes.auth import get_current_user
+import app.database
 
 router = APIRouter(prefix="/cart", tags=["cart"])
 

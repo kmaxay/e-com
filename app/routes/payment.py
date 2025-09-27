@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from routes.auth import get_current_user
+from app.routes.auth import get_current_user
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 

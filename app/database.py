@@ -1,9 +1,9 @@
-from models.product import Product, ProductCreate
-from models.user import User, UserCreate
-from models.cart import CartItem, CartItemCreate
-from models.order import Order, OrderItem, OrderStatus, OrderCreate
-from models.address import Address, AddressCreate
-from auth import get_password_hash, verify_password
+from app.schemas.product import Product, ProductCreate
+from app.schemas.user import User, UserCreate
+from app.schemas.cart import CartItem, CartItemCreate
+from app.schemas.order import Order, OrderItem, OrderStatus, OrderCreate
+from app.schemas.address import Address, AddressCreate
+from app.auth import get_password_hash, verify_password
 from typing import List, Optional
 from datetime import datetime
 
@@ -20,6 +20,29 @@ current_user_id = 1
 current_cart_id = 1
 current_order_id = 1
 current_address_id = 1
+
+
+
+# Persistant DB
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import os
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # ===== PRODUCT OPERATIONS =====
 def get_all_products() -> List[Product]:

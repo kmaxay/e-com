@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from models.address import Address, AddressCreate
-from routes.auth import get_current_user
-import database
+from app.schemas.address import Address, AddressCreate
+from app.routes.auth import get_current_user
+import app.database
 
 router = APIRouter(prefix="/addresses", tags=["addresses"])
 

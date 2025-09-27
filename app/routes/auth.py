@@ -1,10 +1,14 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from models.user import UserCreate, UserLogin, UserResponse
-import database
-from auth import verify_password, create_access_token, SECRET_KEY, ALGORITHM, get_password_hash
+from app.schemas.user import UserCreate, UserLogin, UserResponse
+import app.database as database
+from app.auth import verify_password, create_access_token, SECRET_KEY, ALGORITHM, get_password_hash
 from jose import JWTError, jwt
 from datetime import timedelta
+
+from sqlalchemy.orm import Session
+from app.models.user import User, Base
+Base.metadata.create_all(bind=database.engine)
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 security = HTTPBearer()
@@ -20,9 +24,19 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         raise HTTPException(status_code=401, detail="Invalid authentication")
 
 @router.post("/signup", response_model=UserResponse)
-def signup(user_data: UserCreate):
+def signup(user_data: UserCreate,  db: Session = Depends(database.get_db)):
     try:
-        user = database.create_user(user_data)
+        # user = database.create_user(user_data)
+        db_user = User( 
+                       full_name=user_data.full_name, 
+                       username=user_data.username, 
+                       phone_number=user_data.phone_number, 
+                       is_active=True,
+                       password=get_password_hash(user_data.password))
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return db_user
         return UserResponse(**user.dict())
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

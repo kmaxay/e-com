@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from models.order import Order, OrderCreate, OrderResponse, OrderStatus
-from routes.auth import get_current_user
-import database
+from app.schemas.order import Order, OrderCreate, OrderResponse, OrderStatus
+from app.routes.auth import get_current_user
+import app.database
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 

@@ -1,32 +1,13 @@
-from pydantic import BaseModel, validator
-from typing import Optional
-import re
+from sqlalchemy import Column, Boolean, String
+from app.database import Base
+import uuid
 
-class UserBase(BaseModel):
-    phone_number: str
-    username: Optional[str] = None
-    full_name: Optional[str] = None
+class User(Base):
+    __tablename__ = "users"
 
-    @validator('phone_number')
-    def validate_phone_number(cls, v):
-        # Basic international phone validation
-        if not re.match(r'^\+?[1-9]\d{1,14}$', v.replace(" ", "")):
-            raise ValueError('Invalid phone number format')
-        return v
-
-class UserCreate(UserBase):
-    password: str
-
-class UserLogin(BaseModel):
-    phone_number: str
-    password: str
-
-class UserResponse(BaseModel):
-    id: int
-    phone_number: str
-    username: Optional[str]
-    full_name: Optional[str]
-    is_active: bool
-
-class User(UserResponse):
-    hashed_password: str
+    id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    phone_number = Column(String, nullable=False)
+    username = Column(String, nullable=False)
+    full_name = Column(String, nullable=False)
+    is_active = Column(Boolean, nullable=False)
+    password = Column(String, nullable=False)
